@@ -74,6 +74,8 @@ public class Player : MonoBehaviour
 
         spriteRenderer = GetComponent<SpriteRenderer>();
 
+        audioSource = GetComponent<AudioSource>();
+
         moveAction = InputSystem.actions.FindAction("Player/Move");
 
         jumpAction = InputSystem.actions.FindAction("Player/Jump");
@@ -288,6 +290,7 @@ public class Player : MonoBehaviour
         velocity.x = 0f;
         rigidBody2D.linearVelocity = velocity;
 
+        PlayOneShot(deathClip);
     }
 
     void PlayOneShot(AudioClip clip)

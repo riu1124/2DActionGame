@@ -994,11 +994,11 @@ MonoBehaviour:
   life: {fileID: 1548809912}
   knockbackVelocity: {x: -4, y: 6}
   hitStunTime: 0.4
-  moveStartClip: {fileID: 0}
-  jumpClip: {fileID: 0}
-  landClip: {fileID: 0}
-  damageClip: {fileID: 0}
-  deathClip: {fileID: 0}
+  moveStartClip: {fileID: 8300000, guid: cf96d86459552cf4ab226aa48ce55838, type: 3}
+  jumpClip: {fileID: 8300000, guid: bdb8031e305d9014185a8311a0c0d6c8, type: 3}
+  landClip: {fileID: 8300000, guid: e5c7354a5cb3dfe46946347919efa657, type: 3}
+  damageClip: {fileID: 8300000, guid: 0406e905424fd0646ac0edf600213294, type: 3}
+  deathClip: {fileID: 8300000, guid: bb0a7d069a86ae24f95151c6ce8dac5a, type: 3}
 --- !u!70 &1830325881
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
