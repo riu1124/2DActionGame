@@ -1,0 +1,31 @@
+﻿using UnityEngine;
+
+public class BreakBlock : MonoBehaviour
+{
+    [SerializeField] AudioClip breakSound; // 破壊時の効果音
+    [Header("サウンド -- 破壊効果音")]
+    AudioSource audioSource;
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            // 自分が消えても音を鳴らす（同時に再生してすぐオブジェクトを破壊）
+            AudioSource.PlayClipAtPoint(breakSound, transform.position);
+        }
+        Destroy(gameObject);
+
+    }
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
+    {
+        // 効果音を鳴らす部品を取得して保持
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+}

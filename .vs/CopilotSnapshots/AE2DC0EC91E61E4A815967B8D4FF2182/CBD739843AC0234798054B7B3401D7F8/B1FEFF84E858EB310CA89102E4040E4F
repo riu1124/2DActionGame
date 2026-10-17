@@ -1,0 +1,98 @@
+﻿using UnityEngine;
+
+/// <summary>
+/// 指定した prefab を一定間隔で生成して落とすスポナー用スクリプト
+/// コルーチンを使わずにタイマーで間隔を管理します（初心者向け）
+/// </summary>
+public class Stone : MonoBehaviour
+{
+    [Header("生成するプレハブ")]
+    [SerializeField] GameObject dropPrefab = null; // Inspector に落としたいプレハブを割り当てる
+
+    [Header("生成間隔（秒）")]
+    [SerializeField] float spawnInterval = 2f; // 次の生成までの待ち時間
+
+    [Header("開始遅延（秒）")]
+    [SerializeField] float startDelay = 0f; // ゲーム開始から最初の生成までの遅延
+
+    [Header("生成位置オフセット")]
+    [SerializeField] Vector2 spawnOffset = default; // スポナー位置からのオフセット
+
+    [Header("生成回数(0 = 無限)")]
+    [SerializeField] int maxSpawnCount = 0; // 0 のときは無限に生成
+
+    // 内部用タイマーとカウント
+    float timer;
+    int spawnedCount = 0;
+
+    /// <summary>
+    /// 最初に呼ばれる。タイマーを開始遅延で初期化する。
+    /// </summary>
+    void Start()
+    {
+        // startDelay 秒後に最初の生成が行われるようにタイマーを初期化
+        timer = startDelay;
+    }
+
+    /// <summary>
+    /// 毎フレーム呼ばれる。タイマーを減らして生成を行う。
+    /// </summary>
+    void Update()
+    {
+        // 生成する prefab が設定されていなければ何もしない
+        if (dropPrefab == null) return;
+
+        // maxSpawnCount が設定されていて、上限に達していれば何もしない
+        if (maxSpawnCount > 0 && spawnedCount >= maxSpawnCount) return;
+
+        // タイマーを減らす
+        timer -= Time.deltaTime;
+
+        // タイマーが 0 以下になったら生成する
+        if (timer <= 0f)
+        {
+            SpawnOne();
+
+            // 次の生成までの間隔にリセット
+            timer = spawnInterval;
+        }
+    }
+
+    /// <summary>
+    /// プレハブを 1 つ生成して落とす
+    /// </summary>
+    void SpawnOne()
+    {
+        // 生成位置を決める（スポナーの位置 + オフセット）
+        Vector3 spawnPos = transform.position + (Vector3)spawnOffset;
+
+        // プレハブをシーンに生成する
+        GameObject obj = Instantiate(dropPrefab, spawnPos, Quaternion.identity);
+
+        // デバッグログ：生成したことを出す
+        Debug.Log($"Stone: Spawned '{obj.name}' at {spawnPos}", this);
+
+        // 生成したオブジェクトに Rigidbody2D が無ければ追加する（Trigger 判定や落下のため）
+        var rb = obj.GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            rb = obj.AddComponent<Rigidbody2D>();
+            rb.bodyType = RigidbodyType2D.Dynamic;
+            Debug.Log("Stone: Rigidbody2D was missing, added at runtime.", obj);
+        }
+
+        // 生成したオブジェクトに DeleteOnLayer が付いていなければ自動で付ける
+        var del = obj.GetComponent<DeleteOnLayer>();
+        if (del == null)
+        {
+            obj.AddComponent<DeleteOnLayer>();
+            Debug.Log("Stone: DeleteOnLayer was missing, added at runtime.", obj);
+        }
+
+        // 生成したオブジェクトに Rigidbody2D があれば、自動で落ちる（重力で落とす想定）
+        // もしプレハブに Rigidbody2D が無い場合はここで追加することもできるが、
+        // 基本はプレハブ側で Rigidbody2D を設定しておくことを推奨する。
+
+        spawnedCount++;
+    }
+}

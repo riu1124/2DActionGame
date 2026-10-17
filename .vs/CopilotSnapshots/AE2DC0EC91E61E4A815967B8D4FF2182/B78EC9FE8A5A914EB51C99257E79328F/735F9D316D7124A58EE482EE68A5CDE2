@@ -1,0 +1,45 @@
+﻿using UnityEngine;
+
+// このスクリプトを付けたオブジェクトを回転させ、
+// Y 軸方向に動かす（上下に揺れる or 上方向へ移動）処理を提供します。
+// Inspector から各値を調整できます。
+public class Swa : MonoBehaviour
+{
+    [Header("回転設定")]
+    [SerializeField] float rotationSpeed = 180f; // 回転速度（度/秒）。正で反時計回り、負で時計回り
+
+    [Header("移動設定")]
+    [SerializeField] bool oscillate = true;      // true: 上下に揺れる（sin）、false: 一方向に移動（上方向）
+    [SerializeField] float moveSpeed = 1f;       // 揺れの速さ（oscillate=true のときは周期係数）、一方向移動時は速さ（units/秒）
+    [SerializeField] float amplitude = 0.5f;     // 揺れの振幅（上下の幅）
+
+    // 内部保持用の開始位置
+    Vector3 startPosition;
+
+    void Start()
+    {
+        // 開始時の位置を保存しておく（揺れはこの位置を基準にするため）
+        startPosition = transform.position;
+    }
+
+    void Update()
+    {
+        // 回転（2D 向けに Z 軸回りに回す）
+        // transform.Rotate はローカル空間で回転を適用します。
+        transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+
+        // Y 軸方向の移動
+        if (oscillate)
+        {
+            // 上下に揺れる（sin を使う）
+            // Time.time は起動してからの経過秒。sin の戻り値は -1..1 なので amplitude を掛けて振幅にする。
+            float newY = startPosition.y + Mathf.Sin(Time.time * moveSpeed) * amplitude;
+            transform.position = new Vector3(startPosition.x, newY, startPosition.z);
+        }
+        else
+        {
+            // 上方向に一定速度で移動する
+            transform.Translate(Vector3.up * moveSpeed * Time.deltaTime, Space.World);
+        }
+    }
+}

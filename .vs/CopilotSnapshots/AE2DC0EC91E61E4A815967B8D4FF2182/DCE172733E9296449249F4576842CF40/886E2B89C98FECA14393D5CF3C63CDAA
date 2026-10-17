@@ -1,0 +1,110 @@
+﻿using UnityEngine;
+
+/// <summary>
+/// 指定した場所から素早く下に落ち、何かに当たったら1秒待ってゆっくり元の位置に上がる動作を定期的に行うギミック
+/// コルーチンを使わずに状態とタイマーで制御します（初心者向け）
+/// </summary>
+public class Dossn : MonoBehaviour
+{
+    [Header("動作設定")]
+    [SerializeField] float fallSpeed = 20f;    // 落ちる速さ（下方向）
+    [SerializeField] float riseSpeed = 2f;     // 上がる速さ（上方向、ゆっくり）
+    [SerializeField] float bottomWait = 1f;    // 底で待つ時間（秒）
+    [SerializeField] float cycleInterval = 1f; // 各サイクルの待ち時間（上に戻ってから次の落下までの待ち）
+
+    // 内部状態
+    enum State { Waiting, Falling, WaitingAtBottom, Rising }
+    State state = State.Waiting;
+
+    Vector3 startPosition;
+    Rigidbody2D rb;
+    float timer = 0f;       // 汎用タイマー
+
+    /// <summary>
+    /// 初期化。開始位置を保存し、Rigidbody2D を取得して物理の設定をする
+    /// </summary>
+    void Start()
+    {
+        startPosition = transform.position;
+
+        rb = GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            // Rigidbody2D が無ければ追加（物理判定のため）
+            rb = gameObject.AddComponent<Rigidbody2D>();
+        }
+
+        // 重力は使わず自前で速度を制御するので 0 にする
+        rb.gravityScale = 0f;
+
+        // X 軸の移動と回転を固定して真下／真上に動くようにする
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+
+        // 最初は待機して、少し待ってから落としたい場合は timer を設定する
+        timer = cycleInterval;
+        state = State.Waiting;
+    }
+
+    /// <summary>
+    /// 毎フレーム呼ばれる。状態に応じて速度やタイマーを操作する
+    /// </summary>
+    void Update()
+    {
+        switch (state)
+        {
+            case State.Waiting:
+                // 次の落下まで待つ
+                timer -= Time.deltaTime;
+                if (timer <= 0f)
+                {
+                    // 落下開始
+                    state = State.Falling;
+                    rb.linearVelocity = Vector2.down * fallSpeed;
+                }
+                break;
+
+            case State.Falling:
+                // 衝突を OnCollisionEnter2D で検出して状態を変える
+                break;
+
+            case State.WaitingAtBottom:
+                // 底で少し待つ
+                timer -= Time.deltaTime;
+                if (timer <= 0f)
+                {
+                    // 上昇開始
+                    state = State.Rising;
+                    rb.linearVelocity = Vector2.up * riseSpeed;
+                }
+                break;
+
+            case State.Rising:
+                // 上昇中、開始位置に達したら位置を補正して待機状態に戻す
+                if (transform.position.y >= startPosition.y - 0.001f)
+                {
+                    // 位置を厳密に戻して速度を止める
+                    transform.position = startPosition;
+                    rb.linearVelocity = Vector2.zero;
+                    state = State.Waiting;
+                    timer = cycleInterval;
+                }
+                break;
+        }
+    }
+
+    /// <summary>
+    /// 衝突検出。落下中に何かに当たったら底処理に移る
+    /// </summary>
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (state != State.Falling) return;
+
+        // 当たった相手が自分自身でないことを確認して底での待機に移す
+        if (collision.gameObject == gameObject) return;
+
+        // 底に当たったので速度を止めて待機状態へ
+        rb.linearVelocity = Vector2.zero;
+        state = State.WaitingAtBottom;
+        timer = bottomWait;
+    }
+}

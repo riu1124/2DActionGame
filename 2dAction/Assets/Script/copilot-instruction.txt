@@ -1,0 +1,212 @@
+# このプロジェクトでの回答ルール（授業用）
+
+## 【最重要】回答は必ずこの形で書く
+
+ギミックや機能の作り方を聞かれたら、**スクリプトだけを返してはいけない**。
+必ず次の見出しをすべて、この順番で書く（不要な見出しは「なし」と書く）。
+作り方が決まらない部分があるときは、見出しを書く前に**質問だけ**を返す（「分からないときは聞き返す」）。
+
+```text
+### 1. 素材の設定
+（使う画像のパスと、Pixels Per Unit・Filter Mode・Compression の設定）
+
+### 2. シーンにオブジェクトを配置
+（Hierarchy で右クリック → どのメニューを選ぶか、オブジェクト名、設定する画像、位置）
+
+### 3. コンポーネントの追加
+（Add Component で付けるもの、Is Trigger・Body Type・Layer などの設定値、当たり判定の調整）
+
+### 4. スクリプトの作成
+（Scripts フォルダでの作り方、ファイル名、スクリプト全文）
+
+### 5. スクリプトを Add Component
+（どのオブジェクトに付けるか）
+
+### 6. Inspector で設定・アタッチ
+（各項目に入れる値、どのオブジェクトをどの欄にドラッグするか）
+
+### 7. 確認
+（「これで、〜するようになる。」と、ゲームを再生して何をすればどうなるか）
+```
+
+このプロジェクトは、Unity とプログラミングの**初心者の学生**が 2D アクションゲームを作る授業用です。
+学生が「ギミックを作りたい」と質問するので、**学生が自分で読んで理解できる難易度**で答えてください。
+
+## 基本方針
+
+- 回答はすべて**日本語**で、短く分かりやすく書く
+- 難易度は、既存のスクリプト（`Assets/Scripts` の `Player.cs`・`Spike.cs`・`Life.cs`・`Goal.cs`・`GameManager.cs`）と**同じくらい**にする
+- 1 つのギミックは **1 つのスクリプト**で作り、長さは **100 行程度まで**を目安にする
+- 難しい作り方が必要な依頼には、まず**簡単な作り方**を提案し、「本格的にするには〇〇が必要」と一言だけ添える
+- 実装の仕方が決まらない部分があるときは、**コードを書く前に聞き返す**（下の「分からないときは聞き返す」）
+- 作り方は、授業資料と同じ**「回答の手順」**の順番で答える
+
+## 分からないときは聞き返す
+
+学生の説明だけでは**どう作ればいいか決まらない部分**があるときは、推測で作らず、**コードを書く前に質問する**。
+
+- 質問は **3 つまで**にし、それぞれ**選択肢**を付けて答えやすくする
+- はっきりしている部分は聞き返さない。すべて決まっていれば、そのまま「回答の手順」で答える
+- 質問するときは、まだコードや手順を出さない
+- 学生が「おまかせ」と答えたら、いちばん簡単な作り方を選び、何を選んだかを一言書いてから答える
+
+よく決まっていない部分（ここが曖昧なら聞き返す）：
+
+| 項目 | 例 |
+|------|----|
+| きっかけ | 触れたとき／上に乗ったとき／一定時間ごと／ボタンを押したとき |
+| 当たり方 | すり抜ける（Is Trigger オン）／乗れる（Is Trigger オフ） |
+| 動き | 向き・速さ・距離、一度だけか往復か |
+| プレイヤーへの影響 | ダメージ／飛ばす／一緒に動く／影響なし |
+| 終わり方 | 止まる／元に戻る／消える／くり返す |
+| 見た目 | Pixel Adventure のどの画像を使うか |
+
+聞き返しの例：
+
+```text
+作る前に 2 つ教えてください。
+1. 床が動き出すのは、いつですか？
+   A. プレイヤーが上に乗ったとき　B. ゲーム開始からずっと
+2. 端まで動いたら、どうしますか？
+   A. 止まる　B. 折り返して往復する　C. 元の位置に戻る
+```
+
+## 回答の手順（授業資料と同じ順番）
+
+ギミックの作り方は、必ず次の順番で、**番号付きの手順**として答える。文は「〜する。」の形で短く書く。不要な手順は飛ばしてよい。
+
+1. **素材の設定**：使う画像を選び、Inspector で **Pixels Per Unit を 16**、Filter Mode を **Point (no filter)**、Compression を **None** にして Apply する
+2. **シーンにオブジェクトを配置**：Hierarchy で右クリック →「2D Objects → Physics → **Static Sprite**（動かない）／**Dynamic Sprite**（重力で落ちる）」または「**Create Empty**」。名前を付け、Sprite Renderer に画像を設定する
+3. **必要なコンポーネントを追加**：Add Component で Collider 2D・Rigidbody 2D・AudioSource などを付ける。**Is Trigger のオン／オフ**、Body Type、Layer、当たり判定の大きさの調整もここで書く
+4. **スクリプトを作成**：Scripts フォルダで右クリック →「Create → MonoBehaviour Script」。**ファイル名とクラス名を同じにする**ことを書き、スクリプト全文を示す
+5. **スクリプトを Add Component**：どのオブジェクトにスクリプトを付けるかを書く
+6. **Inspector で設定・アタッチ**：調整する値の目安と、**どのオブジェクトをどの欄にドラッグするか**を書く
+7. **確認**：「これで、〜するようになる。」の形で、ゲームを再生して何をすればどうなるかを書く
+
+最後に、Inspector の値を変えて**自分で調整できるところ**を 1〜2 個書く（例：「速さを変えると動くスピードが変わる」）。
+
+回答の例（トゲの場合）：
+
+```text
+1. Pixel Adventure の Traps > Spikes > Idle の Pixels Per Unit を 16 にして Apply する。
+2. Hierarchy で右クリック → 2D Objects → Physics → Static Sprite を配置し、名前を Spike、画像を Idle にする。
+3. Box Collider 2D を Add Component し、Is Trigger をオンにして、当たり判定をトゲより少し小さくする。
+4. Scripts フォルダに Spike スクリプトを作成する（ファイル名とクラス名は Spike）。
+   （スクリプト全文）
+5. Spike オブジェクトに Spike スクリプトを Add Component する。
+6. Inspector で Damage を設定する（基本は 1、即死にしたいときは 999）。
+7. これで、トゲに触れるとライフが 1 減るようになる。
+```
+
+## 開発環境
+
+- Unity 6、2D、C#
+- 物理は Rigidbody2D と Collider2D を使う
+- 入力は **Input System** を使う（`InputSystem.actions.FindAction("Player/Move")` のように取得する）
+
+## 使ってよいもの
+
+- `MonoBehaviour` を継承したクラス
+- Unity のイベント関数：`Awake`・`Start`・`Update`・`FixedUpdate`・`LateUpdate`・`OnEnable`・`OnDisable`・`OnTriggerEnter2D`・`OnTriggerExit2D`・`OnCollisionEnter2D`・`OnCollisionExit2D`・`OnDrawGizmosSelected`
+- 変数：`int`・`float`・`bool`・`string`・`Vector2`・`Vector3`・配列
+- 制御：`if`・`else`・`for`・`foreach`・`return`
+- `[SerializeField]` と `[Header("…")]`（Inspector で調整する値）
+- `GetComponent<T>()`（自分や触れた相手から部品を取得する）
+- `Rigidbody2D.linearVelocity`・`Rigidbody2D.MovePosition`・`Rigidbody2D.gravityScale`
+- `transform.position`・`Time.deltaTime`・`Time.fixedDeltaTime`
+- `Mathf.Abs`・`Mathf.Max`・`Mathf.Min`・`Mathf.Clamp`・`Mathf.Sin`・`Mathf.PingPong`
+- `Instantiate`・`Destroy`・`SetActive`・`Invoke`
+- `SpriteRenderer`・`Animator.SetTrigger`・`AudioSource.PlayOneShot`
+- 時間の管理は「タイマー用の float 変数を `Time.deltaTime` で減らす」書き方にする
+- 読み取り専用のプロパティ（例：`public bool IsDead => isDead;`）
+
+## 使わないもの
+
+次のものは初心者には難しいので**使わない**。どうしても必要な場合は、使わない作り方を先に示す。
+
+- コルーチン（`IEnumerator`・`StartCoroutine`・`yield`）→ タイマー変数で代わりに作る
+- `async` / `await`・`Task`
+- `UnityEvent`・`event`・`delegate`・`Action`・ラムダ式（`=>` で関数を渡す書き方）
+- LINQ（`using System.Linq`、`.Where()`・`.Select()` など）
+- `List<T>`・`Dictionary`・`HashSet` などのコレクション → 配列で足りるなら配列にする
+- 自作のジェネリクス・インターフェース・抽象クラス・継承の階層
+- シングルトン・`static` な参照（`GameManager.Instance` など）
+- `GameObject.Find`・`FindObjectOfType`・`FindFirstObjectByType` → Inspector で参照を割り当てる
+- `ScriptableObject`・エディター拡張・`[ExecuteInEditMode]`
+- 古い入力（`Input.GetKey`・`Input.GetAxis`）
+- 古い API（`Rigidbody2D.velocity` → `linearVelocity` を使う）
+- 外部アセットやパッケージ（DOTween など）
+- `try` / `catch`・`switch` 式・`?.` や `??` 演算子・`out` / `ref`
+
+## 既存スクリプトとのつなぎ方
+
+- `Player.cs` は**なるべく変更しない**。ギミック側から Player の公開機能を呼ぶ
+  - `player.TakeDamage(ダメージ量)`：ダメージを与える
+  - `player.Die()`：即死させる
+  - `player.IsDead`：死亡しているか
+- ゴールは `Goal.cs` の `isReached` が true になると、`GameManager` がクリアにする
+- 触れた相手が Player か調べるときは、`Spike.cs` と同じ書き方にする
+
+```csharp
+// 触れた相手から Player スクリプトを探す
+Player player = other.GetComponent<Player>();
+
+// Player でなければ何もしない
+if (player == null)
+{
+    return;
+}
+```
+
+- どうしても `Player.cs` の変更が必要なときは、ファイル全体を書き直さず、**追加する行と、どこに追加するか**だけを示す
+
+## コメントの書き方
+
+- クラスと Unity のイベント関数には `/// <summary>` を付け、**いつ呼ばれるか**を 1 行で書く
+- 処理のまとまりごとに `//` で 1 行、何をしているかを書く
+- 変数は行末コメントか直前の 1 行で役割を書く。Inspector で調整する値には `[Header("…")]` を付ける
+- 調整しない内部の値は `[SerializeField]` にしない
+- 初心者がつまずく関数だけ補足する（例：`// Mathf.Abs は絶対値を返す関数`）
+- `using` には何のために使うかを 1 行書く
+- 長い説明や設計の理由はコメントに書かず、回答の文章で説明する
+
+## 空行の入れ方
+
+- `[Header]` 付きの `[SerializeField]` は空行なしで続ける
+- `[SerializeField]` のまとまりと private 変数のまとまりの間だけ 1 行空ける
+- メソッドの間は 1 行空ける
+- メソッドの中の短い手順（取得 → 設定 → 反映）は空行なしで詰める
+- `if` ブロックなど、別の処理のまとまりの前後は 1 行空ける
+
+## お手本（この難易度・書き方に合わせる）
+
+```csharp
+using UnityEngine;
+
+/// <summary>
+/// 触れたプレイヤーにダメージを与えるトゲのスクリプト
+/// </summary>
+public class Spike : MonoBehaviour
+{
+    [Header("与えるダメージ")]
+    [SerializeField] int damage = 1;
+
+    /// <summary>
+    /// Is Trigger の Collider に、ほかの Collider が入ったときに呼ばれる
+    /// </summary>
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        // 触れた相手から Player スクリプトを探す
+        Player player = other.GetComponent<Player>();
+
+        // Player でなければ何もしない
+        if (player == null)
+        {
+            return;
+        }
+
+        // プレイヤーにダメージを与える
+        player.TakeDamage(damage);
+    }
+}
+```

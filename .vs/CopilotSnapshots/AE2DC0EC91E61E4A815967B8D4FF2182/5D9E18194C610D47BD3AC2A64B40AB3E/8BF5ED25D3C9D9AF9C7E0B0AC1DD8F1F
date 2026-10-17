@@ -1,0 +1,50 @@
+﻿using UnityEngine;
+
+// このスクリプトを付けたオブジェクトを回転させ、
+// 指定した軸(X または Y)の + 方向/ - 方向 に移動して、
+// 最初の位置に戻る動きを繰り返す処理を提供します。
+// Inspector から軸・方向・距離・速さを設定できます。
+public class Swa : MonoBehaviour
+{
+    [Header("回転設定")]
+    [SerializeField] float rotationSpeed = 180f; // 回転速度（度/秒）
+
+    [Header("移動設定")]
+    [SerializeField] bool moveOnX = false;      // true: X 軸に動く、false: Y 軸に動く
+    [SerializeField] bool movePositive = true;  // true: +方向、false: -方向
+    [SerializeField] float moveDistance = 1f;   // 基点からの移動距離（単位: Unity の単位）
+    [SerializeField] float moveSpeed = 1f;      // 往復の速さ（大きいと速く行ったり来たりする）
+
+    // 開始位置（基点）を保持するための変数
+    Vector3 startPosition;
+
+    /// <summary>
+    /// オブジェクトが読み込まれたときに一度だけ呼ばれる
+    /// </summary>
+    void Start()
+    {
+        // 開始時の位置を保存しておく（これが「基点」になる）
+        startPosition = transform.position;
+    }
+
+    /// <summary>
+    /// 毎フレーム呼ばれる。回転と往復移動（基点 ⇄ 目的地）を行う
+    /// </summary>
+    void Update()
+    {
+        // 回転（Z 軸回り）。2D では Z 軸を回転させると見た目が回る。
+        transform.Rotate(0f, 0f, rotationSpeed * Time.deltaTime);
+
+        // 往復移動の計算
+        // Mathf.PingPong を使うと 0 -> moveDistance -> 0 を繰り返す値が得られる。
+        // 引数: (時間 * 速さ), 範囲
+        float t = Mathf.PingPong(Time.time * moveSpeed, moveDistance);
+
+        // 方向ベクトルを決める（X または Y。+か-かで符号を反転）
+        Vector3 dir = moveOnX ? Vector3.right : Vector3.up;
+        dir *= (movePositive ? 1f : -1f);
+
+        // 基点から dir 方向に t だけ移動した位置を計算して代入する
+        transform.position = startPosition + dir * t;
+    }
+}

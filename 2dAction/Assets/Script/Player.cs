@@ -352,6 +352,21 @@ public class Player : MonoBehaviour
     }
 
     /// <summary>
+    /// 体力を回復する（アイテム取得などから呼ばれる）
+    /// </summary>
+    /// <param name="amount">回復量</param>
+    public void Heal(int amount)
+    {
+        if (isDead) return; // 死んでいたら回復しない
+
+        // 最大値を超えないように回復する
+        currentHp = Mathf.Min(currentHp + amount, maxHp);
+
+        // ライフ表示を更新
+        life.SetLife(currentHp);
+    }
+
+    /// <summary>
     /// 効果音を 1 回鳴らす
     /// </summary>
     void PlayOneShot(AudioClip clip)
